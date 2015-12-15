@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.itibo.vkcheck.Activity.api.Vk;
 import com.itibo.vkcheck.Activity.common.TimeCommon;
 import com.itibo.vkcheck.Activity.models.PostModel.Attachments.AudioModel;
 import com.itibo.vkcheck.Activity.service.MusicPlayer;
@@ -49,6 +48,8 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.ViewHolder> 
             holder.audioPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    /*MediaPlayerNotification notification = new MediaPlayerNotification();
+                    notification.createNotificationPlayer(activity, arrayList.get(position).getArtist(), arrayList.get(position).getTitle());*/
                     /*TODO ПЛЕЕР СОХРАНЯЮЩИЙ ПЕСНИ, НЕ ВЕРНО ПОЛУЧАЕТ РАЗМЕР ФАЙЛА*/
                     //Vk.GetAudioAsync(arrayList.get(position).getUrl(), arrayList.get(position).getArtist(), arrayList.get(position).getTitle() );
                     MusicPlayer.getInstance().setUrl(arrayList.get(position), arrayList);

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.itibo.vkcheck.Activity.common.CircleTransformation;
 import com.itibo.vkcheck.Activity.common.Values;
 import com.itibo.vkcheck.Activity.models.Profile.ChangesModel;
 import com.itibo.vkcheck.Activity.models.SearchModel;
@@ -65,6 +66,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
 
         Picasso.with(this.activity)
                 .load(usersProfileList.get(position).getPhoto_100())
+                .transform(new CircleTransformation())
                 .into(holder.image);
     }
 

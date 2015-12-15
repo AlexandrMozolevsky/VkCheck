@@ -28,6 +28,9 @@ public class SharedProperty {
     }
 
     public String getCurrentName() {
+        if(activity == null) {
+            return "noName";
+        }
         SharedPreferences sharedPreferences = activity.getSharedPreferences("user", Context.MODE_PRIVATE);
         return sharedPreferences.getString("username", "");
     }

@@ -2,16 +2,12 @@ package com.itibo.vkcheck.Activity.adapter;
 
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.method.MovementMethod;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.itibo.vkcheck.Activity.UserProfile;
+import com.itibo.vkcheck.Activity.common.CircleTransformation;
 import com.itibo.vkcheck.Activity.common.CustomGridLayoutManager;
 import com.itibo.vkcheck.Activity.common.TimeCommon;
 import com.itibo.vkcheck.Activity.models.PostModel.PostModel;
@@ -45,6 +41,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Picasso.with(this.activity)
                 .load(arrayList.get(position).getSearchModel().getPhoto_100())
+                .transform(new CircleTransformation())
                 .into(holder.postPhoto);
 
         Picasso.with(this.activity)

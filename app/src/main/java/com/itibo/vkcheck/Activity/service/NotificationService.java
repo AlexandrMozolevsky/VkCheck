@@ -55,6 +55,7 @@ public class NotificationService extends Service {
                 Vk.asyncGetUsersShort(DBHelper.getStringUsers("notification='1'"), new Vk.CallbackArraySearchModel() {
                     @Override
                     public void onSuccess(final ArrayList<SearchModel> model) {
+                        if(model != null)
                         for (int i = 0; i < model.size(); i++) {
                             final DBModel user = DBHelper.getUserFromDatabase(String.valueOf(model.get(i).getUid()));
                             if (user != null) {

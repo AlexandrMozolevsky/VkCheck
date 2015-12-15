@@ -8,8 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -20,16 +18,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.itibo.vkcheck.Activity.api.Hostinger;
 import com.itibo.vkcheck.Activity.api.Vk;
@@ -37,8 +29,8 @@ import com.itibo.vkcheck.Activity.common.TopCropImageView;
 import com.itibo.vkcheck.Activity.common.TouchImageView;
 import com.itibo.vkcheck.Activity.common.Values;
 import com.itibo.vkcheck.Activity.database.DBHelper;
-import com.itibo.vkcheck.Activity.fragments.User_Posts;
 import com.itibo.vkcheck.Activity.fragments.User_Board;
+import com.itibo.vkcheck.Activity.fragments.User_Posts;
 import com.itibo.vkcheck.Activity.models.DBModel;
 import com.itibo.vkcheck.Activity.models.HostingerModel;
 import com.itibo.vkcheck.Activity.models.Profile.Subscribers;
@@ -202,7 +194,7 @@ public class UserProfile extends AppCompatActivity {
                                             }
                                         });
                                         /*TODO*/
-                                        /*Hostinger.asyncAddUser(String.valueOf(user.getUid()), new Hostinger.CallbackResponse() {
+                                        Hostinger.asyncAddUser(String.valueOf(user.getUid()), new Hostinger.CallbackResponse() {
                                             @Override
                                             public void onSuccess(HostingerModel model) {
 
@@ -212,7 +204,7 @@ public class UserProfile extends AppCompatActivity {
                                             public void onError(String error) {
 
                                             }
-                                        });*/
+                                        });
                                     }
                                 }
 
@@ -234,20 +226,21 @@ public class UserProfile extends AppCompatActivity {
                             Hostinger.asyncGetUser(String.valueOf(user.getUid()), new Hostinger.CallbackResponse() {
                                 @Override
                                 public void onSuccess(HostingerModel model) {
-                                    if (model.getCode().equals("201")) {
-                                        Hostinger.asyncRemoveUser(String.valueOf(user.getUid()), new Hostinger.CallbackResponse() {
-                                            @Override
-                                            public void onSuccess(HostingerModel model) {
-                                                DBHelper.getInstance().deleteRows(DBHelper.HISTORY_FRIENDS, "user_id='" + user.getUid() + "'");
-                                                DBHelper.getInstance().deleteRows(DBHelper.HISTORY_SUBSCRIBERS, "user_id='" + user.getUid() + "'");
-                                            }
+                                    if(model != null)
+                                        if (model.getCode().equals("201")) {
+                                            Hostinger.asyncRemoveUser(String.valueOf(user.getUid()), new Hostinger.CallbackResponse() {
+                                                @Override
+                                                public void onSuccess(HostingerModel model) {
+                                                    DBHelper.getInstance().deleteRows(DBHelper.HISTORY_FRIENDS, "user_id='" + user.getUid() + "'");
+                                                    DBHelper.getInstance().deleteRows(DBHelper.HISTORY_SUBSCRIBERS, "user_id='" + user.getUid() + "'");
+                                                }
 
-                                            @Override
-                                            public void onError(String error) {
+                                                @Override
+                                                public void onError(String error) {
 
-                                            }
-                                        });
-                                    }
+                                                }
+                                            });
+                                        }
                                 }
 
                                 @Override

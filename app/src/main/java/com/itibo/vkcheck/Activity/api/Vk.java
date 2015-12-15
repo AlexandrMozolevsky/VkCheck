@@ -224,61 +224,64 @@ public class Vk {
         new AsyncTask<String, Void, ArrayList<SearchModel>>() {
             @Override
             protected ArrayList<SearchModel> doInBackground(String... params) {
-                String resultString = "";
-                String responseLine = "";
-                ArrayList<SearchModel> returnModel = new ArrayList<SearchModel>();
+                if (params[0] != null) {
+                    String resultString = "";
+                    String responseLine = "";
+                    ArrayList<SearchModel> returnModel = new ArrayList<SearchModel>();
 
-                Uri.Builder builder = new Uri.Builder();
-                builder.scheme("https")
-                        .authority("api.vk.com")
-                        .appendPath("method")
-                        .appendPath("users.get")
-                        .appendQueryParameter("user_ids", params[0])
-                        .appendQueryParameter("fields", "photo_100,online,last_seen");
-                String myUrl = builder.build().toString();
+                    Uri.Builder builder = new Uri.Builder();
+                    builder.scheme("https")
+                            .authority("api.vk.com")
+                            .appendPath("method")
+                            .appendPath("users.get")
+                            .appendQueryParameter("user_ids", params[0])
+                            .appendQueryParameter("fields", "photo_100,online,last_seen");
+                    String myUrl = builder.build().toString();
 
-                try {
-                    HttpURLConnection connection = (HttpURLConnection) new URL(myUrl).openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setRequestProperty("Content-Length", "0");
-                    connection.setConnectTimeout(10000);
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    while ((responseLine = bufferedReader.readLine()) != null) {
-                        resultString += responseLine;
-                    }
-                    bufferedReader.close();
-
-                    JSONObject jsonObject = new JSONObject(resultString);
-                    JSONArray response = jsonObject.getJSONArray("response");
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject currLot = response.getJSONObject(i);
-                        SearchModel tempModel = new SearchModel();
-                        if (currLot.has("uid"))
-                            tempModel.setUid(currLot.getInt("uid"));
-                        if (currLot.has("first_name"))
-                            tempModel.setFirst_name(currLot.getString("first_name"));
-                        if (currLot.has("last_name"))
-                            tempModel.setLast_name(currLot.getString("last_name"));
-                        if (currLot.has("photo_100"))
-                            tempModel.setPhoto_100(currLot.getString("photo_100"));
-                        if (currLot.has("online"))
-                            tempModel.setOnline(Integer.parseInt(currLot.getString("online")));
-
-                        if (currLot.has("last_seen")) {
-                            LastSeenModel tempLastSeen = new LastSeenModel();
-                            JSONObject data = new JSONObject(currLot.getString("last_seen"));
-                            if (data.has("platform"))
-                                tempLastSeen.setPlatform(Integer.parseInt(data.getString("platform")));
-                            if (data.has("time"))
-                                tempLastSeen.setTime(Integer.parseInt(data.getString("time")));
-                            tempModel.setLast_seen(tempLastSeen);
+                    try {
+                        HttpURLConnection connection = (HttpURLConnection) new URL(myUrl).openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.setRequestProperty("Content-Length", "0");
+                        connection.setConnectTimeout(10000);
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        while ((responseLine = bufferedReader.readLine()) != null) {
+                            resultString += responseLine;
                         }
-                        returnModel.add(tempModel);
+                        bufferedReader.close();
+
+                        JSONObject jsonObject = new JSONObject(resultString);
+                        JSONArray response = jsonObject.getJSONArray("response");
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject currLot = response.getJSONObject(i);
+                            SearchModel tempModel = new SearchModel();
+                            if (currLot.has("uid"))
+                                tempModel.setUid(currLot.getInt("uid"));
+                            if (currLot.has("first_name"))
+                                tempModel.setFirst_name(currLot.getString("first_name"));
+                            if (currLot.has("last_name"))
+                                tempModel.setLast_name(currLot.getString("last_name"));
+                            if (currLot.has("photo_100"))
+                                tempModel.setPhoto_100(currLot.getString("photo_100"));
+                            if (currLot.has("online"))
+                                tempModel.setOnline(Integer.parseInt(currLot.getString("online")));
+
+                            if (currLot.has("last_seen")) {
+                                LastSeenModel tempLastSeen = new LastSeenModel();
+                                JSONObject data = new JSONObject(currLot.getString("last_seen"));
+                                if (data.has("platform"))
+                                    tempLastSeen.setPlatform(Integer.parseInt(data.getString("platform")));
+                                if (data.has("time"))
+                                    tempLastSeen.setTime(Integer.parseInt(data.getString("time")));
+                                tempModel.setLast_seen(tempLastSeen);
+                            }
+                            returnModel.add(tempModel);
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException | IOException e) {
-                    e.printStackTrace();
+                    return returnModel;
                 }
-                return returnModel;
+                return null;
             }
 
             @Override
@@ -381,7 +384,7 @@ public class Vk {
                     }
 
                 } catch (JSONException | IOException e1) {
-                   e1.printStackTrace();
+                    e1.printStackTrace();
                 }
                 return subscribers;
             }
@@ -825,13 +828,13 @@ public class Vk {
                     int lenghtOfFile = connection.getContentLength();
 
                     File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/Music/vkcheck/");
-                    try{
-                        if(dir.mkdir()) {
+                    try {
+                        if (dir.mkdir()) {
                             System.out.println("Directory created");
                         } else {
                             System.out.println("Directory is not created");
                         }
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 

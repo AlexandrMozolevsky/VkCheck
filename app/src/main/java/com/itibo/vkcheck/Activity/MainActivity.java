@@ -4,30 +4,27 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.itibo.vkcheck.Activity.adapter.SearchAdapter;
@@ -35,6 +32,7 @@ import com.itibo.vkcheck.Activity.api.Vk;
 import com.itibo.vkcheck.Activity.common.SharedProperty;
 import com.itibo.vkcheck.Activity.database.DBHelper;
 import com.itibo.vkcheck.Activity.fragments.Search;
+import com.itibo.vkcheck.Activity.fragments.SendNotification;
 import com.itibo.vkcheck.Activity.fragments.Users;
 import com.itibo.vkcheck.Activity.models.SearchModel;
 import com.itibo.vkcheck.Activity.service.MusicPlayer;
@@ -52,10 +50,12 @@ public class MainActivity extends AppCompatActivity
 
     private final static String USER_TAG = "USER_FRAGMENT";
     private final static String SEARCH_TAG = "SEARCH_FRAGMENT";
+    private final static String SEND_TAG = "SEND_FRAGMENT";
 
     private NavigationView navigationView;
     private Search searchFragment;
     private Users usersFragment;
+    private SendNotification sendFragment;
     private Fragment selectedFragment = null;
 
     private ProgressBar progressBarMain;
@@ -114,6 +114,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void showSendNotification() {
+        if (!(selectedFragment instanceof SendNotification)) {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            hideFragments();
+            if (null == sendFragment) {
+                sendFragment = new SendNotification();
+                fragmentTransaction.add(R.id.mainPager, sendFragment, SEND_TAG);
+            }
+            fragmentTransaction.show(sendFragment);
+            fragmentTransaction.commit();
+            getFragmentManager().executePendingTransactions();
+            selectedFragment = sendFragment;
+        }
+    }
+
     private void hideFragments() {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         usersFragment = (Users) getFragmentManager().findFragmentByTag(USER_TAG);
@@ -124,6 +139,11 @@ public class MainActivity extends AppCompatActivity
         searchFragment = (Search) getFragmentManager().findFragmentByTag(SEARCH_TAG);
         if (null != searchFragment) {
             fragmentTransaction.hide(searchFragment);
+        }
+
+        sendFragment = (SendNotification) getFragmentManager().findFragmentByTag(SEND_TAG);
+        if (null != sendFragment) {
+            fragmentTransaction.hide(sendFragment);
         }
 
         fragmentTransaction.commit();
@@ -195,8 +215,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initTextViews() {
-        navHeaderUsername = (TextView) findViewById(R.id.navHeaderUsername);
-        navHeaderUsername.setText("Привет, " + SharedProperty.getInstance().getCurrentName());
+        navHeaderUsername = (TextView)  ((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0).findViewById(R.id.navHeaderUsername);
+        String vcal = SharedProperty.getInstance().getCurrentName();
+        navHeaderUsername.setText("Привет, " + vcal);
     }
 
 
@@ -256,6 +277,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             }
             case R.id.nav_share: {
+                uncheckItems();
+                toolbar.setTitle("Поделиться");
+                item.setChecked(true);
+                showSendNotification();
+                hideFab();
+                invalidateOptionsMenu();
                 break;
             }
             case R.id.nav_logout: {
