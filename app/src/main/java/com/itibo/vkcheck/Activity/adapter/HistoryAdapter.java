@@ -3,6 +3,7 @@ package com.itibo.vkcheck.Activity.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.online.setText(arrayList.get(position).getType() == 0 ? "Оффлайн " + (arrayList.size() > position + 1 ? "(в сети " + TimeCommon.getHourMinuteFromUnix(arrayList.get(position).getTime() - arrayList.get(position + 1) .getTime())  + ")": "") : "Онлайн");
         holder.text.setText(TimeCommon.getTimeFromUnix(arrayList.get(position).getTime()));
         holder.image.setImageResource(arrayList.get(position).getDevice() == 7 ? R.drawable.pc : R.drawable.phone);
+
+        Log.e("Target", String.valueOf(arrayList.get(position).getTime()));
+        Log.e("TEST", arrayList.get(position).getType() == 0 ? "Оффлайн " + (arrayList.size() > position + 1 ? "(в сети " + TimeCommon.getHourMinuteFromUnix(arrayList.get(position).getTime() - arrayList.get(position + 1) .getTime())  + ")": "") : "Онлайн " + arrayList.get(position).getTime());
     }
 
     @Override

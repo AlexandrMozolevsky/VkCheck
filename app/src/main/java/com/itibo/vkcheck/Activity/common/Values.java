@@ -3,6 +3,9 @@ package com.itibo.vkcheck.Activity.common;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 /**
  * Created by erick on 16.10.15.
  */
@@ -20,6 +23,26 @@ public class Values {
     public static int dpToPx(Context context, int dp) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return (int)((dp * displayMetrics.density));
+    }
+
+    public static int getDayNumber(){
+        return Calendar.getInstance(TimeZone.getDefault()).get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static int getHourNumber(){
+        return Calendar.getInstance(TimeZone.getDefault()).get(Calendar.HOUR_OF_DAY);
+    }
+
+    public static int getMinuteNumber(){
+        return Calendar.getInstance(TimeZone.getDefault()).get(Calendar.MINUTE);
+    }
+
+    public static int getSecondNumber(){
+        return Calendar.getInstance(TimeZone.getDefault()).get(Calendar.SECOND);
+    }
+
+    public static int getHourFromUnix(int unix){
+        return (int)(unix - (int)(System.currentTimeMillis() / 1000 - Values.getHourNumber()*3600 - Values.getMinuteNumber()*60 - Values.getSecondNumber()))/3600;
     }
 
     public static final String SERVICE_START_MUSIC = "service.start_music";

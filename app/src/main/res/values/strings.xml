@@ -18,5 +18,6 @@
     <string name="errorWallClosed">Пользователь скрыл свою стену для не авторизированных пользователей</string>
     <string name="errorHistoryEmpty">Ошибка. Пользователь не добавлен на сервере. Для устранения этой проблемы нажмите на кнопку ниже.</string>
     <string name="historyEmpty">История посещений пока что пуста. Обновление истории на сервере происходит каждые 5 - 7 минут. Спасибо за понимание.</string>
+    <string name="historyFriendsEmpty">У Вас не содержится людей с которыми можно было бы сравнить данного пользователя. Добавьте других пользователей.</string>
     <string name="errorHistoryEmptyButton">Исправить</string>
 </resources>

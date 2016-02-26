@@ -165,7 +165,7 @@ public class UserProfile extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(ArrayList<Integer> list) {
                                                 String execute = "INSERT INTO '" + DBHelper.HISTORY_FRIENDS +"'('user_id', 'friend_uid') VALUES ";
-                                                for (int i = 0; i < (list.size() > 499 ? 499 : list.size()); i++) {
+                                                for (int i = 0; i < (list.size() > 200 ? 200 : list.size()); i++) {
                                                     if(list.get(i) != null && user != null)
                                                         execute += "('" + user.getUid() + "','" + list.get(i) +"'),";
                                                     //DBHelper.getInstance().insertRows(DBHelper.HISTORY_FRIENDS, DBHelper.setBoardContentValues(user.getUid(), list.get(i)));
@@ -179,7 +179,7 @@ public class UserProfile extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Subscribers model) {
                                                 String execute = "INSERT INTO '" + DBHelper.HISTORY_SUBSCRIBERS +"'('user_id', 'friend_uid') VALUES ";
-                                                for (int i = 0; i < (model.getItems().length > 499 ? 499 : model.getItems().length); i++) {
+                                                for (int i = 0; i < (model.getItems().length > 200 ? 200 : model.getItems().length); i++) {
                                                     if(model.getItems()[i] != null && user != null)
                                                         execute += "('" + user.getUid() + "','" + model.getItems()[i] +"'),";
                                                     //DBHelper.getInstance().insertRows(DBHelper.HISTORY_SUBSCRIBERS, DBHelper.setBoardContentValues(user.getUid(), Integer.parseInt(model.getItems()[i])));
@@ -193,7 +193,6 @@ public class UserProfile extends AppCompatActivity {
 
                                             }
                                         });
-                                        /*TODO*/
                                         Hostinger.asyncAddUser(String.valueOf(user.getUid()), new Hostinger.CallbackResponse() {
                                             @Override
                                             public void onSuccess(HostingerModel model) {
@@ -226,7 +225,7 @@ public class UserProfile extends AppCompatActivity {
                             Hostinger.asyncGetUser(String.valueOf(user.getUid()), new Hostinger.CallbackResponse() {
                                 @Override
                                 public void onSuccess(HostingerModel model) {
-                                    if(model != null)
+                                    if (model != null)
                                         if (model.getCode().equals("201")) {
                                             Hostinger.asyncRemoveUser(String.valueOf(user.getUid()), new Hostinger.CallbackResponse() {
                                                 @Override

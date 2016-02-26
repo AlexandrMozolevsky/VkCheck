@@ -73,4 +73,13 @@ public class TimeCommon {
         String secondString = String.valueOf(second).length() == 1 ? "0" + second : String.valueOf(second);
         return (hour == 0 ? "" : hourString) + minuteString + secondString;
     }
+
+    public static int[] getArrayHourMinute(int time) {
+        int hour = time / 60;
+        int minute = (time - hour * 60)/60;
+        int[] result = new int[2];
+        result[0] = hour;
+        result[1] = minute;
+        return result;
+    }
 }

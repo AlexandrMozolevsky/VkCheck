@@ -1,21 +1,17 @@
 package com.itibo.vkcheck.Activity;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.itibo.vkcheck.Activity.adapter.HistoryAdapter;
-import com.itibo.vkcheck.Activity.api.Hostinger;
-import com.itibo.vkcheck.Activity.models.HostingerModel;
+import com.itibo.vkcheck.Activity.fragments.History_Diagramm;
+import com.itibo.vkcheck.Activity.fragments.History_Row;
 import com.itibo.vkcheck.Activity.models.PostModel.HistoryModel;
 import com.itibo.vkcheck.Activity.models.SearchModel;
 import com.itibo.vkcheck.R;
@@ -27,15 +23,15 @@ import java.util.ArrayList;
  */
 public class History extends AppCompatActivity {
     Intent intent;
+    Toolbar toolbar;
     SearchModel searchModel;
 
-    Toolbar toolbar;
-    RecyclerView recyclerView;
-    ProgressBar progressBar;
+    Fragment selectedFragment;
+    History_Row history_row;
+    History_Diagramm history_diagramm;
 
-    TextView historyError;
-
-    Button fixHistoryButton;
+    private static final String HISTORY_ROW = "history_row";
+    private static final String HISTORY_DIAGRAMM = "history_diagramm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,35 +42,7 @@ public class History extends AppCompatActivity {
         searchModel = (SearchModel) intent.getSerializableExtra("user");
 
         setToolbar();
-        setButton();
-        setTextView();
-        setProgressBar();
-        setRecycler();
-    }
-
-    private void setButton() {
-        fixHistoryButton = (Button) findViewById(R.id.fixHistoryButton);
-        fixHistoryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Hostinger.asyncAddUser(String.valueOf(searchModel.getUid()), new Hostinger.CallbackResponse() {
-                    @Override
-                    public void onSuccess(HostingerModel model) {
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                });
-            }
-        });
-    }
-
-    private void setTextView() {
-        historyError = (TextView) findViewById(R.id.historyError);
-
+        showRow();
     }
 
     private void setToolbar() {
@@ -89,65 +57,88 @@ public class History extends AppCompatActivity {
         }
     }
 
-    private void setRecycler() {
-        recyclerView = (RecyclerView) findViewById(R.id.historyRecycler);
-
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(mLinearLayoutManager);
-
-
-        Hostinger.asyncGetUser(String.valueOf(searchModel.getUid()), new Hostinger.CallbackResponse() {
-            @Override
-            public void onSuccess(HostingerModel model) {
-                if (model.getCode().equals("201")) {
-                    Hostinger.asyncGetHistory(String.valueOf(searchModel.getUid()), new Hostinger.CallbackHistory() {
-                        @Override
-                        public void onSuccess(ArrayList<HistoryModel> model) {
-                            HistoryAdapter historyAdapter = new HistoryAdapter(model, History.this);
-                            if(historyAdapter.getItemCount() == 0) {
-                                historyError.setText(getResources().getString(R.string.historyEmpty));
-                            }
-                            progressBar.setVisibility(View.GONE);
-                            recyclerView.setAdapter(historyAdapter);
-                        }
-
-                        @Override
-                        public void onError(String error) {
-
-                        }
-                    });
-                } else {
-                    historyError.setText(getResources().getString(R.string.errorHistoryEmpty));
-                    progressBar.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.GONE);
-                    fixHistoryButton.setVisibility(View.VISIBLE);
-                }
+    private void showRow() {
+        if (!(selectedFragment instanceof History_Row)) {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            hideFragments();
+            if (null == history_row) {
+                history_row = new History_Row();
+                history_row.setIntent(searchModel);
+                fragmentTransaction.add(R.id.historyPage, history_row, HISTORY_ROW);
             }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        });
-
+            fragmentTransaction.show(history_row);
+            fragmentTransaction.commit();
+            getFragmentManager().executePendingTransactions();
+            selectedFragment = history_row;
+        }
     }
 
-    private void setProgressBar() {
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    private void showDiagramm() {
+        if (!(selectedFragment instanceof History_Diagramm)) {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            hideFragments();
+            if (null == history_diagramm) {
+                history_diagramm = new History_Diagramm();
+                history_diagramm.setIntent(searchModel);
+                fragmentTransaction.add(R.id.historyPage, history_diagramm, HISTORY_DIAGRAMM);
+            }
+            fragmentTransaction.show(history_diagramm);
+            fragmentTransaction.commit();
+            getFragmentManager().executePendingTransactions();
+            selectedFragment = history_diagramm;
+        }
+    }
+
+    private void hideFragments() {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        history_row = (History_Row) getFragmentManager().findFragmentByTag(HISTORY_ROW);
+        if (null != history_row) {
+            fragmentTransaction.hide(history_row);
+        }
+
+        history_diagramm = (History_Diagramm) getFragmentManager().findFragmentByTag(HISTORY_DIAGRAMM);
+        if (null != history_diagramm) {
+            fragmentTransaction.hide(history_diagramm);
+        }
+
+        fragmentTransaction.commit();
+        getFragmentManager().executePendingTransactions();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == android.R.id.home) {
-            finish();
-            return true;
+        switch (id) {
+            case R.id.historyRaws: {
+                showRow();
+                break;
+            }
+            case R.id.historyDiagramm: {
+                showDiagramm();
+                break;
+            }
+            case android.R.id.home: {
+                finish();
+                break;
+            }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.history, menu);
+        return true;
+    }
+
+    public ArrayList<HistoryModel> currentUserHistory;
+
+    public void setHistoryForDiagramm(ArrayList<HistoryModel> model) {
+        currentUserHistory = model;
+
+        if(history_diagramm != null)
+            history_diagramm.setMainHistory(model);
     }
 }

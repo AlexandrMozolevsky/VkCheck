@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -200,7 +199,9 @@ public class User_Board extends Fragment {
         for (int i = 0; i < modelFromVk.size(); i++) {
             vkArray.add(modelFromVk.get(i).getUid());
         }
-
+        if(modelFromDB == null) {
+            return;
+        }
         for (int i = 0; i < modelFromDB.size(); i++) {
             dbArray.add(modelFromDB.get(i).getFriend_uid());
         }
